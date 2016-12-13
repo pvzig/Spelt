@@ -22,7 +22,11 @@ all:
 	xcodebuild $(XCODEFLAGS) build
 
 bootstrap:
-	carthage bootstrap --use-submodules --platform Mac
+	carthage update --use-submodules
+	cd Carthage/Checkouts/PathKit && swift package generate-xcodeproj
+	cd Carthage/Checkouts/Stencil && swift package generate-xcodeproj
+	cd Carthage/Checkouts/Spectre && swift package generate-xcodeproj
+	carthage build --platform Mac
 
 clean:
 	rm -rf "$(TEMPORARY_FOLDER)"

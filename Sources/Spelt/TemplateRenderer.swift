@@ -1,4 +1,5 @@
 import PathKit
+import Stencil
 
 struct TemplateRenderer: Renderer {
     enum RendererType {
@@ -9,8 +10,8 @@ struct TemplateRenderer: Renderer {
     private var defaultContext: Context {
         var contextDict = [String: Any]()
         contextDict["site"] = site.payload
-        contextDict["loader"] = TemplateLoader(paths: [Path(SiteConfiguration.Path.includes.relativeToPath(site.path))])
-        return Context(dictionary: contextDict)
+        contextDict["loader"] = FileSystemLoader(paths: [Path(SiteConfiguration.Path.includes.relativeToPath(site.path))])
+        return Context(dictionary: contextDict, namespace: Namespace.defaultNamespace())
     }
     
     let site: Site
@@ -35,18 +36,16 @@ struct TemplateRenderer: Renderer {
     // only renders file contents. ignores template name metadata
     private func renderInPlace(_ file: FileWithMetadata) throws {
         let context = defaultContext
-        context.push(file.payload)
-        
-        let template = Template(templateString: file.contents)
-        do {
-            let rendered = try template.render(context, namespace: Namespace.defaultNamespace())
-            file.contents = rendered
+        try context.push(dictionary: file.payload) {
+            let template = Template(templateString: file.contents)
+            do {
+                let rendered = try template.render(context)
+                file.contents = rendered
+            }
+            catch {
+                throw SiteRenderer.RenderError(filePath: file.path, lineNumber: nil, underlyingError: error)
+            }
         }
-        catch {
-            throw SiteRenderer.RenderError(filePath: file.path, lineNumber: nil, underlyingError: error)
-        }
-        
-        context.pop()
     }
     
     // renders file contents recursively into defined template
@@ -64,28 +63,26 @@ struct TemplateRenderer: Renderer {
         let templatePath = Path(templatesPath) + Path(templateName.stringByAppendingPathExtension("html")!)
         
         let context = defaultContext
-        context.push(file.payload)
-        
-        do {
-            let template = try Template(path: templatePath)
-            let rendered = try template.render(context, namespace: Namespace.defaultNamespace())
-            let contents = rendered.stringByReplacingFrontMatter("")
-            file.contents = contents
-            
-            context.pop()
-            
-            if let renderedFileMetadata = try? FrontMatterReader.frontMatterForString(rendered).metadata, let templateName = renderedFileMetadata.templateName {
-                // append file metadata to template file metadata
-                file.metadata = renderedFileMetadata + file.metadata
-                try renderFileWithTemplate(file, templateName: templateName)
+        try context.push(dictionary: file.payload) {
+            do {
+                let template = try Template(path: templatePath)
+                let rendered = try template.render(context)
+                let contents = rendered.stringByReplacingFrontMatter("")
+                file.contents = contents
+                
+                if let renderedFileMetadata = try? FrontMatterReader.frontMatterForString(rendered).metadata, let templateName = renderedFileMetadata.templateName {
+                    // append file metadata to template file metadata
+                    file.metadata = renderedFileMetadata + file.metadata
+                    try renderFileWithTemplate(file, templateName: templateName)
+                }
             }
-        }
-        catch let error as SiteRenderer.RenderError {
-            // method can throw recursively. make sure we only wrap the underlying error once.
-            throw error
-        }
-        catch {
-            throw SiteRenderer.RenderError(filePath: templatePath.description, lineNumber: nil, underlyingError: error)
+            catch let error as SiteRenderer.RenderError {
+                // method can throw recursively. make sure we only wrap the underlying error once.
+                throw error
+            }
+            catch {
+                throw SiteRenderer.RenderError(filePath: templatePath.description, lineNumber: nil, underlyingError: error)
+            }
         }
     }
 }

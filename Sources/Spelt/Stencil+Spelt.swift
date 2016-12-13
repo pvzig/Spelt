@@ -1,27 +1,29 @@
+import Stencil
+
 extension Namespace {
     static func defaultNamespace() -> Namespace {
         let namespace = Namespace()
-        namespace.registerFilter("date", filter: Filter(dateFilter))
-        namespace.registerFilter("date_to_string", filter: Filter(dateToStringFilter))
-        namespace.registerFilter("date_to_rfc822", filter: Filter(dateToRFC822Filter))
-        namespace.registerFilter("date_to_xmlschema", filter: Filter(dateToXMLSchemaFilter))
-        namespace.registerFilter("markdownify", filter: Filter(markdownFilter))
-        namespace.registerFilter("xml_escape", filter: Filter(xmlEscapeFilter))
-        namespace.registerFilter("url_encode", filter: Filter(URLEncodeFilter))
-        namespace.registerFilter("prepend", filter: Filter(prependFilter))
-        namespace.registerFilter("append", filter: Filter(appendFilter))
-        namespace.registerFilter("replace", filter: Filter(replaceFilter))
-        namespace.registerFilter("remove", filter: Filter(removeFilter))
-        namespace.registerFilter("strip_html", filter: Filter(stripHTMLFilter))
-        namespace.registerFilter("strip_newlines", filter: Filter(stripNewlinesFilter))
-        namespace.registerFilter("truncate", filter: Filter(truncateFilter))
-        namespace.registerFilter("join", filter: Filter(joinFilter))
-        namespace.registerFilter("array_to_sentence_string", filter: Filter(arrayToSentenceStringFilter))
-        namespace.registerFilter("number_of_words", filter: Filter(numberOfWordsFilter))
-        namespace.registerFilter("divided_by", filter: Filter(dividedByFilter))
-        namespace.registerFilter("floor", filter: Filter(floorFilter))
-        namespace.registerFilter("ceil", filter: Filter(ceilFilter))
-        namespace.registerFilter("default", filter: Filter(defaultFilter))
+        namespace.registerFilter("date", filter: dateFilter)
+        namespace.registerFilter("date_to_string", filter: dateToStringFilter)
+        namespace.registerFilter("date_to_rfc822", filter: dateToRFC822Filter)
+        namespace.registerFilter("date_to_xmlschema", filter: dateToXMLSchemaFilter)
+        namespace.registerFilter("markdownify", filter: markdownFilter)
+        namespace.registerFilter("xml_escape", filter: xmlEscapeFilter)
+        namespace.registerFilter("url_encode", filter: URLEncodeFilter)
+        namespace.registerFilter("prepend", filter: prependFilter)
+        namespace.registerFilter("append", filter: appendFilter)
+        namespace.registerFilter("replace", filter: replaceFilter)
+        namespace.registerFilter("remove", filter: removeFilter)
+        namespace.registerFilter("strip_html", filter: stripHTMLFilter)
+        namespace.registerFilter("strip_newlines", filter: stripNewlinesFilter)
+        namespace.registerFilter("truncate", filter: truncateFilter)
+        namespace.registerFilter("join", filter: joinFilter)
+        namespace.registerFilter("array_to_sentence_string", filter: arrayToSentenceStringFilter)
+        namespace.registerFilter("number_of_words", filter: numberOfWordsFilter)
+        namespace.registerFilter("divided_by", filter: dividedByFilter)
+        namespace.registerFilter("floor", filter: floorFilter)
+        namespace.registerFilter("ceil", filter: ceilFilter)
+        namespace.registerFilter("default", filter: defaultFilter)
         
         namespace.registerTag("gist", parser: gistTag)
         namespace.registerTag("katex", parser: KaTexNode.parse)
@@ -49,6 +51,8 @@ func dateFilter(_ value: Any?, arguments: [Any?]) throws -> Any? {
     }
     
     let dateFormatter = DateFormatter()
+    dateFormatter.calendar = Calendar.current
+    dateFormatter.locale = Locale.current
     dateFormatter.dateFormat = format
     return dateFormatter.string(from: date)
 }
@@ -274,7 +278,7 @@ public class KaTexNode : NodeType {
         
         var inline: Bool = false
         if components.count == 2 {
-            let inlineComponents = components[1].splitAndTrimWhitespace(":")
+            let inlineComponents = components[1].components(separatedBy: ":").map() { $0.trimmingCharacters(in: CharacterSet(charactersIn: " ")) }
             guard inlineComponents.count == 2 && inlineComponents.first! == "inline" else {
                 throw TemplateSyntaxError("Invalid argument in katex tag '\(components.last!)'")
             }
