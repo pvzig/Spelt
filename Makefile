@@ -22,7 +22,7 @@ all:
 	xcodebuild $(XCODEFLAGS) build
 
 bootstrap:
-	carthage update --use-submodules
+	carthage checkout --use-submodules
 	cd Carthage/Checkouts/PathKit && swift package generate-xcodeproj
 	cd Carthage/Checkouts/Stencil && swift package generate-xcodeproj
 	cd Carthage/Checkouts/Spectre && swift package generate-xcodeproj
