@@ -25,10 +25,10 @@ struct PaginationRenderer: Renderer {
             
             func URLForPage(withIndex index: Int) -> String {
                 guard index > 0 else {
-                    return file.URLString
+                    return "\(file.URLString)index.html"
                 }
                 let path = destinationPath.stringByDeletingLastPathComponent
-                let URL = "/" + path.stringByAppendingPathComponent("\(index)")
+                let URL = "/" + path.stringByAppendingPathComponent("\(index)/index.html")
                 return URL
             }
             
