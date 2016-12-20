@@ -106,7 +106,7 @@ extension Metadata {
         }
         
         if let categories = self["categories"]?.stringValue {
-            return categories.split(",").map() { $0.trim(" ") }
+            return categories.components(separatedBy: ",").map() { $0.trimmingCharacters(in: CharacterSet(charactersIn: " ")) }
         }
         
         if let categories = self["categories"]?.arrayValue {

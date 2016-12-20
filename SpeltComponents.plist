@@ -13,6 +13,18 @@
 				<key>BundleOverwriteAction</key>
 				<string></string>
 				<key>RootRelativeBundlePath</key>
+				<string>Library/Frameworks/SpeltKit.framework/Versions/A/Frameworks/Spectre.framework</string>
+			</dict>
+			<dict>
+				<key>BundleOverwriteAction</key>
+				<string></string>
+				<key>RootRelativeBundlePath</key>
+				<string>Library/Frameworks/SpeltKit.framework/Versions/A/Frameworks/Stencil.framework</string>
+			</dict>
+			<dict>
+				<key>BundleOverwriteAction</key>
+				<string></string>
+				<key>RootRelativeBundlePath</key>
 				<string>Library/Frameworks/SpeltKit.framework/Versions/A/Frameworks/Commandant.framework</string>
 			</dict>
 			<dict>

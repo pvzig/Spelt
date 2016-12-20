@@ -19,6 +19,6 @@ struct MarkdownConverter: Converter {
     }
     
     static func htmlFromMarkdown(_ markdown: String) -> String? {
-        return Hoedown.renderHTMLForMarkdown(markdown, extensions: [.Tables, .FootNotes, .AutoLinkURLs, .FencedCodeBlocks, .Quote, .NoIntraEmphasis, .StrikeThrough])
+        return Hoedown.renderHTMLForMarkdown(markdown, extensions: [.Tables, .AutoLinkURLs, .FencedCodeBlocks, .Quote, .NoIntraEmphasis, .StrikeThrough])
     }
 }

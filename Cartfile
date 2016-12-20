@@ -3,5 +3,7 @@ github "njdehoog/libyaml-swift" == 0.1.3
 github "njdehoog/Witness" == 0.1.2
 github "sagmor/GCDWebServer" "frameworks"
 github "njdehoog/libsass-swift" == 0.1.1
-github "njdehoog/PathKit" "carthage"
 github "Carthage/Commandant"
+github "kylef/PathKit"
+github "kylef/Stencil"
+github "kylef/Spectre"
