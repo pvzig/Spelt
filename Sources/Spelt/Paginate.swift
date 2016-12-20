@@ -12,7 +12,7 @@ struct PaginationRenderer: Renderer {
                 continue
             }
             
-            let items = site.posts.map({ $0 as FileWithMetadata })
+            let items = site.posts.sorted(by: {$0.0.date! > $0.1.date!}).map({ $0 as FileWithMetadata })
             
             func pathForPage(withIndex index: Int) -> String {
                 guard index > 0 else {
